@@ -23,7 +23,7 @@ import {
   Sparkles,
   Search
 } from 'lucide-react';
-import { TipoVisa, NivelIngles, NivelEstudio, Solicitud } from '../types';
+import { TipoVisa, NivelIngles, NivelEstudio, Solicitud, TipoDocumentoIdentidad } from '../types';
 import { solicitudStore } from '../lib/store';
 
 interface PublicSolicitudPageProps {
@@ -49,6 +49,7 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
     nacionalidad: 'Mexicana',
     paisResidencia: 'México',
     fechaNacimiento: '',
+    tipoDocumento: 'pasaporte' as TipoDocumentoIdentidad,
     numeroPasaporte: '',
     vencimientoPasaporte: '',
     
@@ -83,7 +84,11 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
         return false;
       }
       if (!formData.numeroPasaporte.trim()) {
-        setErrorValidacion('El número de pasaporte es obligatorio para la radicación del expediente.');
+        setErrorValidacion(
+          formData.tipoDocumento === 'dpi'
+            ? 'El número de DPI es obligatorio para la radicación del expediente.'
+            : 'El número de pasaporte (o DPI si no tiene pasaporte) es obligatorio para la radicación del expediente.'
+        );
         return false;
       }
       if (!formData.fechaNacimiento) {
@@ -143,6 +148,7 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
         nacionalidad: formData.nacionalidad,
         paisResidencia: formData.paisResidencia,
         fechaNacimiento: formData.fechaNacimiento,
+        tipoDocumento: formData.tipoDocumento,
         numeroPasaporte: formData.numeroPasaporte.trim().toUpperCase(),
         vencimientoPasaporte: formData.vencimientoPasaporte || '2030-12-31',
         tipoVisa: formData.tipoVisa,
@@ -429,17 +435,91 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
                     />
                   </div>
 
+                  {/* Selector de Documento: Pasaporte o DPI */}
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
+                      Tipo de Documento de Identificación *
+                    </label>
+                    <p className="text-xs text-slate-500 mb-3">
+                      Si aún no tiene pasaporte vigente, puede seleccionar la opción <strong>DPI</strong> para iniciar el trámite de su expediente.
+                    </p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <button
+                        type="button"
+                        id="btn-doc-pasaporte"
+                        onClick={() => setFormData({ ...formData, tipoDocumento: 'pasaporte' })}
+                        className={`p-3.5 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                          formData.tipoDocumento === 'pasaporte'
+                            ? 'border-amber-500 bg-amber-50/80 ring-2 ring-amber-500/20 text-slate-900 shadow-xs'
+                            : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${
+                          formData.tipoDocumento === 'pasaporte' ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 text-slate-500'
+                        }`}>
+                          📘
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold">Pasaporte Oficial</span>
+                            {formData.tipoDocumento === 'pasaporte' && (
+                              <span className="text-[10px] bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded font-black">ACTIVO</span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                            Tengo pasaporte emitido por mi país de origen
+                          </p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        id="btn-doc-dpi"
+                        onClick={() => setFormData({ ...formData, tipoDocumento: 'dpi' })}
+                        className={`p-3.5 rounded-xl border text-left transition-all flex items-start gap-3 ${
+                          formData.tipoDocumento === 'dpi'
+                            ? 'border-amber-500 bg-amber-50/80 ring-2 ring-amber-500/20 text-slate-900 shadow-xs'
+                            : 'border-slate-200 bg-white hover:border-slate-300 text-slate-700'
+                        }`}
+                      >
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center text-sm font-bold shrink-0 ${
+                          formData.tipoDocumento === 'dpi' ? 'bg-amber-500 text-slate-950' : 'bg-slate-100 text-slate-500'
+                        }`}>
+                          🪪
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-xs font-bold">DPI (No tengo pasaporte)</span>
+                            {formData.tipoDocumento === 'dpi' && (
+                              <span className="text-[10px] bg-amber-500 text-slate-950 px-1.5 py-0.2 rounded font-black">ACTIVO</span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-500 mt-0.5 leading-snug">
+                            Documento Personal de Identificación nacional
+                          </p>
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                      Número de Pasaporte *
+                      {formData.tipoDocumento === 'dpi' ? 'Número de DPI *' : 'Número de Pasaporte *'}
                     </label>
                     <input
+                      id="input-numero-documento"
                       type="text"
                       value={formData.numeroPasaporte}
                       onChange={(e) => setFormData({ ...formData, numeroPasaporte: e.target.value })}
-                      placeholder="G12345678"
+                      placeholder={formData.tipoDocumento === 'dpi' ? 'Ej: 2450 12345 0101' : 'Ej: G12345678'}
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-medium font-mono focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none uppercase"
                     />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      {formData.tipoDocumento === 'dpi'
+                        ? 'Podrá tramitar o presentar su pasaporte antes de su cita consular.'
+                        : 'Consigne el número tal como aparece en su libreta de pasaporte.'}
+                    </p>
                   </div>
 
                   <div>
@@ -652,9 +732,14 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
                     <span className="text-slate-500">Postulante:</span>
                     <strong className="text-slate-900">{formData.nombres} {formData.apellidos}</strong>
                   </div>
-                  <div className="flex justify-between pb-2 border-b border-slate-200/80">
-                    <span className="text-slate-500">Pasaporte:</span>
-                    <strong className="font-mono text-slate-900">{formData.numeroPasaporte} ({formData.nacionalidad})</strong>
+                  <div className="flex justify-between pb-2 border-b border-slate-200/80 items-center">
+                    <span className="text-slate-500">Documento:</span>
+                    <div className="text-right">
+                      <span className="inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider mr-2 bg-amber-100 text-amber-900 border border-amber-300">
+                        {formData.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte'}
+                      </span>
+                      <strong className="font-mono text-slate-900">{formData.numeroPasaporte} ({formData.nacionalidad})</strong>
+                    </div>
                   </div>
                   <div className="flex justify-between pb-2 border-b border-slate-200/80">
                     <span className="text-slate-500">Contacto:</span>

@@ -108,14 +108,15 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       porPagina: 1000
     }).items;
 
-    const encabezados = ['Radicado', 'Nombres', 'Apellidos', 'Email', 'Telefono', 'Pasaporte', 'Nacionalidad', 'TipoVisa', 'Profesion', 'Estado', 'ProgresoPct', 'FechaCreacion'];
+    const encabezados = ['Radicado', 'Nombres', 'Apellidos', 'Email', 'Telefono', 'TipoDocumento', 'NumeroDocumento', 'Nacionalidad', 'TipoVisa', 'Profesion', 'Estado', 'ProgresoPct', 'FechaCreacion'];
     const filas = todas.map((s) => [
       s.radicado,
       `"${s.nombres}"`,
       `"${s.apellidos}"`,
       s.email,
       `"${s.telefono}"`,
-      s.numeroPasaporte,
+      s.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte',
+      `"${s.numeroPasaporte}"`,
       s.nacionalidad,
       s.tipoVisa,
       `"${s.profesionOficio}"`,
@@ -368,8 +369,13 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                           <p className="font-bold text-slate-900 group-hover:text-amber-600 transition-colors">
                             {sol.nombres} {sol.apellidos}
                           </p>
-                          <p className="font-mono text-[11px] text-slate-400">
-                            {sol.radicado} • Pasaporte: {sol.numeroPasaporte}
+                          <p className="font-mono text-[11px] text-slate-400 flex items-center gap-1.5 mt-0.5">
+                            <span>{sol.radicado}</span>
+                            <span>•</span>
+                            <span className="uppercase text-[9px] font-extrabold px-1 py-0.2 rounded bg-slate-100 text-slate-600 border border-slate-200">
+                              {sol.tipoDocumento === 'dpi' ? 'DPI' : 'PAS'}
+                            </span>
+                            <span>{sol.numeroPasaporte}</span>
                           </p>
                         </div>
                       </div>

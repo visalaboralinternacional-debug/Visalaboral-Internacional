@@ -195,6 +195,54 @@ export async function ejecutarSuitePruebas(): Promise<{
     solicitudStore.eliminarSolicitud(nueva.id);
   });
 
+  registrar('Store: Radicación con DPI (sin pasaporte inicial) y actualización', 'Store & Persistencia', () => {
+    const nuevaConDpi = solicitudStore.crearSolicitud({
+      nombres: 'Postulante DPI',
+      apellidos: 'Guatemala Test',
+      email: 'dpi.test@visatrabajo.com',
+      telefono: '+502 4444 5555',
+      paisNacimiento: 'Guatemala',
+      nacionalidad: 'Guatemalteca',
+      paisResidencia: 'Guatemala',
+      fechaNacimiento: '1998-05-12',
+      tipoDocumento: 'dpi',
+      numeroPasaporte: '2450 18920 0101',
+      vencimientoPasaporte: '2032-05-12',
+      tipoVisa: 'H-2A',
+      profesionOficio: 'Recolector Agrícola',
+      experienciaAnos: 2,
+      nivelIngles: 'ninguno',
+      nivelEstudio: 'primaria',
+      habilidadesClave: ['Cosecha manual'],
+      tieneOfertaLaboral: true,
+      visasPreviasEEUU: false,
+      denegacionesPrevias: false,
+      estado: 'pendiente'
+    });
+
+    if (nuevaConDpi.tipoDocumento !== 'dpi' || nuevaConDpi.numeroPasaporte !== '2450 18920 0101') {
+      throw new Error('Fallo al registrar postulante con DPI');
+    }
+
+    // Probar transición cuando el postulante adquiere pasaporte
+    const actualizadaConPasaporte = solicitudStore.actualizarSolicitud(
+      nuevaConDpi.id,
+      {
+        tipoDocumento: 'pasaporte',
+        numeroPasaporte: 'G99887711',
+        vencimientoPasaporte: '2036-05-12'
+      },
+      'Legal',
+      'Postulante presentó libreta de pasaporte tramitada.'
+    );
+
+    if (!actualizadaConPasaporte || actualizadaConPasaporte.tipoDocumento !== 'pasaporte') {
+      throw new Error('Fallo al actualizar DPI a pasaporte');
+    }
+
+    solicitudStore.eliminarSolicitud(nuevaConDpi.id);
+  });
+
   registrar('Store: Actualización de estado y recálculo de porcentaje', 'Store & Persistencia', () => {
     const estadisticas = solicitudStore.obtenerEstadisticas();
     if (estadisticas.total === 0) {

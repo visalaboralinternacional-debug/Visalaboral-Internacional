@@ -130,10 +130,10 @@ export async function generarContratoMaestroDocx(solicitud: Solicitud): Promise<
               new TableRow({
                 children: [
                   new TableCell({
-                    children: [new Paragraph({ children: [new TextRun({ text: 'Pasaporte No.:', bold: true })] })]
+                    children: [new Paragraph({ children: [new TextRun({ text: solicitud.tipoDocumento === 'dpi' ? 'Documento DPI No.:' : 'Pasaporte No.:', bold: true })] })]
                   }),
                   new TableCell({
-                    children: [new Paragraph({ text: `${solicitud.numeroPasaporte} (Nacionalidad: ${solicitud.nacionalidad})` })]
+                    children: [new Paragraph({ text: `${solicitud.numeroPasaporte} (${solicitud.tipoDocumento === 'dpi' ? 'DPI Nacional' : 'Pasaporte Oficial'} - Nacionalidad: ${solicitud.nacionalidad})` })]
                   })
                 ]
               }),
@@ -257,7 +257,7 @@ export async function generarContratoMaestroDocx(solicitud: Solicitud): Promise<
                         alignment: AlignmentType.CENTER,
                         children: [
                           new TextRun({ text: 'EL SOLICITANTE\n', bold: true }),
-                          new TextRun({ text: `${solicitud.nombres} ${solicitud.apellidos}\nPasaporte: ${solicitud.numeroPasaporte}` })
+                          new TextRun({ text: `${solicitud.nombres} ${solicitud.apellidos}\n${solicitud.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte'}: ${solicitud.numeroPasaporte}` })
                         ]
                       })
                     ]

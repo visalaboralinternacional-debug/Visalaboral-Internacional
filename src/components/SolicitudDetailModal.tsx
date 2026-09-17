@@ -25,7 +25,7 @@ import {
   CheckCircle2,
   FileSpreadsheet
 } from 'lucide-react';
-import { Solicitud, EstadoSolicitud, EstadoRequisito } from '../types';
+import { Solicitud, EstadoSolicitud, EstadoRequisito, TipoDocumentoIdentidad } from '../types';
 import { solicitudStore } from '../lib/store';
 import { generarContratoMaestroDocx, generarGuiaRequisitosDocx, descargarBlob } from '../lib/docx';
 
@@ -46,6 +46,30 @@ export const SolicitudDetailModal: React.FC<SolicitudDetailModalProps> = ({
   const [nuevaNota, setNuevaNota] = useState('');
   const [generandoDoc, setGenerandoDoc] = useState<string | null>(null);
   const [pestanaActiva, setPestanaActiva] = useState<'checklist' | 'perfil' | 'notas'>('checklist');
+
+  // Edición de tipo y número de documento (Pasaporte o DPI)
+  const [editandoDoc, setEditandoDoc] = useState(false);
+  const [tipoDocEdit, setTipoDocEdit] = useState<TipoDocumentoIdentidad>(solicitud.tipoDocumento || 'pasaporte');
+  const [numeroDocEdit, setNumeroDocEdit] = useState(solicitud.numeroPasaporte);
+  const [vencimientoDocEdit, setVencimientoDocEdit] = useState(solicitud.vencimientoPasaporte || '');
+
+  const handleGuardarDocumento = () => {
+    if (!numeroDocEdit.trim()) return;
+    const actualizada = solicitudStore.actualizarSolicitud(
+      solicitud.id,
+      {
+        tipoDocumento: tipoDocEdit,
+        numeroPasaporte: numeroDocEdit.trim().toUpperCase(),
+        vencimientoPasaporte: vencimientoDocEdit || '2030-12-31'
+      },
+      'Coordinación Legal',
+      `Documento actualizado a ${tipoDocEdit === 'dpi' ? 'DPI' : 'Pasaporte'}: ${numeroDocEdit.trim().toUpperCase()}`
+    );
+    if (actualizada) {
+      onActualizado(actualizada);
+      setEditandoDoc(false);
+    }
+  };
 
   const handleCambiarEstadoRequisito = (itemId: string, nuevoEstado: EstadoRequisito) => {
     const actualizada = solicitudStore.actualizarItemChecklist(solicitud.id, itemId, nuevoEstado);
@@ -150,8 +174,14 @@ export const SolicitudDetailModal: React.FC<SolicitudDetailModalProps> = ({
             <h2 className="text-xl sm:text-2xl font-black text-white mt-1.5 tracking-tight">
               {solicitud.nombres} {solicitud.apellidos}
             </h2>
-            <p className="text-xs text-slate-400 font-medium">
-              {solicitud.profesionOficio} • Pasaporte: {solicitud.numeroPasaporte} • {solicitud.nacionalidad}
+            <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mt-0.5">
+              <span>{solicitud.profesionOficio}</span>
+              <span>•</span>
+              <span className="uppercase text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-slate-800 text-amber-300 border border-slate-700">
+                {solicitud.tipoDocumento === 'dpi' ? 'DPI' : 'PASAPORTE'}: {solicitud.numeroPasaporte}
+              </span>
+              <span>•</span>
+              <span>{solicitud.nacionalidad}</span>
             </p>
           </div>
 
@@ -368,9 +398,96 @@ export const SolicitudDetailModal: React.FC<SolicitudDetailModalProps> = ({
                     <span className="text-slate-400 font-medium">Nombres y Apellidos:</span>
                     <p className="font-bold text-slate-900 mt-0.5">{solicitud.nombres} {solicitud.apellidos}</p>
                   </div>
-                  <div>
-                    <span className="text-slate-400 font-medium">Pasaporte:</span>
-                    <p className="font-mono font-bold text-slate-900 mt-0.5">{solicitud.numeroPasaporte} (Vence: {solicitud.vencimientoPasaporte})</p>
+                  <div className="p-2.5 rounded-xl bg-white border border-slate-200">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-slate-400 font-medium">
+                        {solicitud.tipoDocumento === 'dpi' ? 'DPI Nacional:' : 'Pasaporte Oficial:'}
+                      </span>
+                      {!editandoDoc ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setTipoDocEdit(solicitud.tipoDocumento || 'pasaporte');
+                            setNumeroDocEdit(solicitud.numeroPasaporte);
+                            setVencimientoDocEdit(solicitud.vencimientoPasaporte || '');
+                            setEditandoDoc(true);
+                          }}
+                          className="text-[10px] font-bold text-amber-700 hover:text-amber-800 underline"
+                        >
+                          Modificar
+                        </button>
+                      ) : null}
+                    </div>
+
+                    {!editandoDoc ? (
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[10px] uppercase font-black px-1.5 py-0.5 rounded border ${
+                            solicitud.tipoDocumento === 'dpi'
+                              ? 'bg-amber-100 text-amber-900 border-amber-300'
+                              : 'bg-blue-50 text-blue-800 border-blue-200'
+                          }`}>
+                            {solicitud.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte'}
+                          </span>
+                          <p className="font-mono font-bold text-slate-900">{solicitud.numeroPasaporte}</p>
+                        </div>
+                        <p className="text-[11px] text-slate-400 mt-1">
+                          {solicitud.tipoDocumento === 'dpi'
+                            ? 'Postulante registrado con DPI (Sin pasaporte actual)'
+                            : `Vence: ${solicitud.vencimientoPasaporte}`}
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-2 mt-1">
+                        <div className="flex gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setTipoDocEdit('pasaporte')}
+                            className={`flex-1 py-1 text-[11px] font-bold rounded-lg border ${
+                              tipoDocEdit === 'pasaporte'
+                                ? 'bg-amber-500 text-slate-950 border-amber-500'
+                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
+                          >
+                            Pasaporte
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setTipoDocEdit('dpi')}
+                            className={`flex-1 py-1 text-[11px] font-bold rounded-lg border ${
+                              tipoDocEdit === 'dpi'
+                                ? 'bg-amber-500 text-slate-950 border-amber-500'
+                                : 'bg-slate-100 text-slate-600 border-slate-200'
+                            }`}
+                          >
+                            DPI
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          value={numeroDocEdit}
+                          onChange={(e) => setNumeroDocEdit(e.target.value)}
+                          placeholder={tipoDocEdit === 'dpi' ? 'Número de DPI' : 'Número de Pasaporte'}
+                          className="w-full px-2 py-1 text-xs border border-slate-300 rounded font-mono uppercase"
+                        />
+                        <div className="flex gap-1.5 pt-1">
+                          <button
+                            type="button"
+                            onClick={handleGuardarDocumento}
+                            className="px-2.5 py-1 bg-slate-900 text-white rounded text-[11px] font-bold"
+                          >
+                            Guardar
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setEditandoDoc(false)}
+                            className="px-2.5 py-1 bg-slate-200 text-slate-700 rounded text-[11px]"
+                          >
+                            Cancelar
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <span className="text-slate-400 font-medium">Nacionalidad / Nacimiento:</span>

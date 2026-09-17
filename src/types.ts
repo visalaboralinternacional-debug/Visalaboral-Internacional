@@ -38,6 +38,8 @@ export interface CategoriaRequisito {
   items: ItemRequisito[];
 }
 
+export type TipoDocumentoIdentidad = 'pasaporte' | 'dpi';
+
 export interface NotaHistorial {
   id: string;
   autor: string;
@@ -53,7 +55,7 @@ export interface Solicitud {
   fechaActualizacion: string;
   estado: EstadoSolicitud;
   
-  // Datos personales
+  // Datos personales e identificación
   nombres: string;
   apellidos: string;
   email: string;
@@ -62,7 +64,8 @@ export interface Solicitud {
   nacionalidad: string;
   paisResidencia: string;
   fechaNacimiento: string;
-  numeroPasaporte: string;
+  tipoDocumento?: TipoDocumentoIdentidad; // 'pasaporte' o 'dpi' (si aún no posee pasaporte)
+  numeroPasaporte: string; // Almacena el número de Pasaporte o de DPI según corresponda
   vencimientoPasaporte: string;
   
   // Perfil laboral y habilidades

@@ -122,7 +122,7 @@ export const TrackingModal: React.FC<TrackingModalProps> = ({
                 type="text"
                 value={consulta}
                 onChange={(e) => setConsulta(e.target.value)}
-                placeholder="Ejemplo: VLI-2026-1042 o su correo registrado"
+                placeholder="Radicado (ej: VLI-2026-1042), correo o No. de Pasaporte / DPI"
                 className="w-full px-4 py-3 pl-11 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-slate-900 text-sm font-medium outline-none transition-all placeholder:text-slate-400"
                 autoFocus
               />
@@ -161,10 +161,19 @@ export const TrackingModal: React.FC<TrackingModalProps> = ({
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm pt-3 border-t border-slate-200/80">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm pt-3 border-t border-slate-200/80">
                     <div>
                       <span className="text-xs text-slate-500">Postulante:</span>
                       <p className="font-semibold text-slate-800">{solicitud.nombres} {solicitud.apellidos}</p>
+                    </div>
+                    <div>
+                      <span className="text-xs text-slate-500">Identificación:</span>
+                      <p className="font-semibold text-slate-800 flex items-center gap-1.5">
+                        <span className="text-[10px] uppercase font-bold px-1.5 py-0.2 rounded bg-slate-200 text-slate-700">
+                          {solicitud.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte'}
+                        </span>
+                        <span className="font-mono text-xs">{solicitud.numeroPasaporte}</span>
+                      </p>
                     </div>
                     <div>
                       <span className="text-xs text-slate-500">Oficio / Perfil:</span>
