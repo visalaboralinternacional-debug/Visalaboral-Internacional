@@ -1,0 +1,6 @@
+{
+  "name": "Visa Laboral Internacional",
+  "description": "Sistema integral de gestión de solicitudes de visas de trabajo (H-2A, H-2B, EB-3, J-1), generación de contratos DOCX, checklists y seguimiento de expedientes.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
