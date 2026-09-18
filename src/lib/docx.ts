@@ -140,6 +140,16 @@ export async function generarContratoMaestroDocx(solicitud: Solicitud): Promise<
               new TableRow({
                 children: [
                   new TableCell({
+                    children: [new Paragraph({ children: [new TextRun({ text: 'Procedencia y Residencia:', bold: true })] })]
+                  }),
+                  new TableCell({
+                    children: [new Paragraph({ text: `${solicitud.departamento ? `${solicitud.departamento}, ` : ''}${solicitud.paisNacimiento} (Residencia actual: ${solicitud.paisResidencia})` })]
+                  })
+                ]
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
                     children: [new Paragraph({ children: [new TextRun({ text: 'Categoría de Visa Solicitada:', bold: true })] })]
                   }),
                   new TableCell({
@@ -153,7 +163,7 @@ export async function generarContratoMaestroDocx(solicitud: Solicitud): Promise<
                     children: [new Paragraph({ children: [new TextRun({ text: 'Correo y Contacto:', bold: true })] })]
                   }),
                   new TableCell({
-                    children: [new Paragraph({ text: `${solicitud.email} | ${solicitud.telefono}` })]
+                    children: [new Paragraph({ text: solicitud.email ? `${solicitud.email} | Tel: ${solicitud.telefono}` : `Tel / WhatsApp: ${solicitud.telefono}` })]
                   })
                 ]
               })

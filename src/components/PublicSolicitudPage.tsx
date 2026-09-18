@@ -23,7 +23,7 @@ import {
   Sparkles,
   Search
 } from 'lucide-react';
-import { TipoVisa, NivelIngles, NivelEstudio, Solicitud, TipoDocumentoIdentidad } from '../types';
+import { TipoVisa, NivelIngles, NivelEstudio, Solicitud, TipoDocumentoIdentidad, DEPARTAMENTOS_GUATEMALA } from '../types';
 import { solicitudStore } from '../lib/store';
 
 interface PublicSolicitudPageProps {
@@ -45,9 +45,10 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
     apellidos: '',
     email: '',
     telefono: '',
-    paisNacimiento: 'México',
-    nacionalidad: 'Mexicana',
-    paisResidencia: 'México',
+    paisNacimiento: 'Guatemala',
+    nacionalidad: 'Guatemalteco/a',
+    departamento: 'Guatemala',
+    paisResidencia: 'Guatemala',
     fechaNacimiento: '',
     tipoDocumento: 'pasaporte' as TipoDocumentoIdentidad,
     numeroPasaporte: '',
@@ -75,8 +76,8 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
         setErrorValidacion('Por favor ingrese sus nombres y apellidos completos.');
         return false;
       }
-      if (!formData.email.trim() || !formData.email.includes('@')) {
-        setErrorValidacion('Ingrese un correo electrónico válido para enviarle su número de radicado.');
+      if (formData.email.trim() && !formData.email.includes('@')) {
+        setErrorValidacion('Si ingresa un correo electrónico, asegúrese de que sea válido (debe incluir @).');
         return false;
       }
       if (!formData.telefono.trim() || formData.telefono.length < 7) {
@@ -142,10 +143,11 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
       const nueva = solicitudStore.crearSolicitud({
         nombres: formData.nombres.trim(),
         apellidos: formData.apellidos.trim(),
-        email: formData.email.trim().toLowerCase(),
+        email: formData.email.trim() ? formData.email.trim().toLowerCase() : '',
         telefono: formData.telefono.trim(),
         paisNacimiento: formData.paisNacimiento,
         nacionalidad: formData.nacionalidad,
+        departamento: formData.departamento,
         paisResidencia: formData.paisResidencia,
         fechaNacimiento: formData.fechaNacimiento,
         tipoDocumento: formData.tipoDocumento,
@@ -410,16 +412,25 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                      Correo Electrónico *
-                    </label>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                        Correo Electrónico
+                      </label>
+                      <span className="text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.2 rounded border border-amber-200">
+                        Opcional
+                      </span>
+                    </div>
                     <input
+                      id="input-email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      placeholder="correo@ejemplo.com"
+                      placeholder="correo@ejemplo.com (Opcional)"
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none"
                     />
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Si no posee correo, las notificaciones de su radicado se coordinarán vía WhatsApp o llamada telefónica.
+                    </p>
                   </div>
 
                   <div>
@@ -536,26 +547,68 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                      Nacionalidad
+                      País de Origen / Nacimiento *
                     </label>
                     <input
+                      id="input-pais-origen"
                       type="text"
-                      value={formData.nacionalidad}
-                      onChange={(e) => setFormData({ ...formData, nacionalidad: e.target.value })}
-                      placeholder="Mexicana, Colombiana, Peruana, etc."
+                      value={formData.paisNacimiento}
+                      onChange={(e) => setFormData({ ...formData, paisNacimiento: e.target.value })}
+                      placeholder="Guatemala"
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none"
                     />
                   </div>
 
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
-                      País de Residencia Actual
+                      Nacionalidad *
                     </label>
                     <input
+                      id="input-nacionalidad"
+                      type="text"
+                      value={formData.nacionalidad}
+                      onChange={(e) => setFormData({ ...formData, nacionalidad: e.target.value })}
+                      placeholder="Guatemalteco/a"
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none"
+                    />
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                        Departamento (Guatemala) *
+                      </label>
+                      <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.2 rounded font-semibold border border-amber-200">
+                        22 Departamentos
+                      </span>
+                    </div>
+                    <select
+                      id="select-departamento"
+                      value={formData.departamento}
+                      onChange={(e) => setFormData({ ...formData, departamento: e.target.value })}
+                      className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-medium bg-white focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none cursor-pointer"
+                    >
+                      {DEPARTAMENTOS_GUATEMALA.map((dep) => (
+                        <option key={dep} value={dep}>
+                          {dep}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-[11px] text-slate-400 mt-1">
+                      Seleccione el departamento donde radica o nació dentro de Guatemala.
+                    </p>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-1">
+                      País de Residencia Actual *
+                    </label>
+                    <input
+                      id="input-pais-residencia"
                       type="text"
                       value={formData.paisResidencia}
                       onChange={(e) => setFormData({ ...formData, paisResidencia: e.target.value })}
-                      placeholder="México, Colombia, etc."
+                      placeholder="Guatemala"
                       className="w-full px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-medium focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500 outline-none"
                     />
                   </div>
@@ -742,8 +795,16 @@ export const PublicSolicitudPage: React.FC<PublicSolicitudPageProps> = ({
                     </div>
                   </div>
                   <div className="flex justify-between pb-2 border-b border-slate-200/80">
+                    <span className="text-slate-500">Procedencia:</span>
+                    <strong className="text-slate-900">
+                      {formData.departamento ? `${formData.departamento}, ` : ''}{formData.paisNacimiento}
+                    </strong>
+                  </div>
+                  <div className="flex justify-between pb-2 border-b border-slate-200/80">
                     <span className="text-slate-500">Contacto:</span>
-                    <span className="text-slate-900">{formData.email} • {formData.telefono}</span>
+                    <span className="text-slate-900">
+                      {formData.email.trim() ? `${formData.email.trim()} • ` : ''}{formData.telefono}
+                    </span>
                   </div>
                   <div className="flex justify-between pb-2 border-b border-slate-200/80">
                     <span className="text-slate-500">Programa:</span>

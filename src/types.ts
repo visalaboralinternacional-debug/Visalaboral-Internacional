@@ -40,6 +40,33 @@ export interface CategoriaRequisito {
 
 export type TipoDocumentoIdentidad = 'pasaporte' | 'dpi';
 
+export const DEPARTAMENTOS_GUATEMALA = [
+  'Alta Verapaz',
+  'Baja Verapaz',
+  'Chimaltenango',
+  'Chiquimula',
+  'El Progreso',
+  'Escuintla',
+  'Guatemala',
+  'Huehuetenango',
+  'Izabal',
+  'Jalapa',
+  'Jutiapa',
+  'Petén',
+  'Quetzaltenango',
+  'Quiché',
+  'Retalhuleu',
+  'Sacatepéquez',
+  'San Marcos',
+  'Santa Rosa',
+  'Sololá',
+  'Suchitepéquez',
+  'Totonicapán',
+  'Zacapa'
+] as const;
+
+export type DepartamentoGuatemala = (typeof DEPARTAMENTOS_GUATEMALA)[number];
+
 export interface NotaHistorial {
   id: string;
   autor: string;
@@ -58,11 +85,12 @@ export interface Solicitud {
   // Datos personales e identificación
   nombres: string;
   apellidos: string;
-  email: string;
+  email?: string; // Correo electrónico (opcional)
   telefono: string;
   paisNacimiento: string;
   nacionalidad: string;
   paisResidencia: string;
+  departamento?: string; // Departamento de Guatemala o región de residencia
   fechaNacimiento: string;
   tipoDocumento?: TipoDocumentoIdentidad; // 'pasaporte' o 'dpi' (si aún no posee pasaporte)
   numeroPasaporte: string; // Almacena el número de Pasaporte o de DPI según corresponda

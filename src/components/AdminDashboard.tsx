@@ -108,16 +108,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       porPagina: 1000
     }).items;
 
-    const encabezados = ['Radicado', 'Nombres', 'Apellidos', 'Email', 'Telefono', 'TipoDocumento', 'NumeroDocumento', 'Nacionalidad', 'TipoVisa', 'Profesion', 'Estado', 'ProgresoPct', 'FechaCreacion'];
+    const encabezados = ['Radicado', 'Nombres', 'Apellidos', 'Email', 'Telefono', 'TipoDocumento', 'NumeroDocumento', 'Nacionalidad', 'PaisOrigen', 'Departamento', 'TipoVisa', 'Profesion', 'Estado', 'ProgresoPct', 'FechaCreacion'];
     const filas = todas.map((s) => [
       s.radicado,
       `"${s.nombres}"`,
       `"${s.apellidos}"`,
-      s.email,
+      s.email || '',
       `"${s.telefono}"`,
       s.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte',
       `"${s.numeroPasaporte}"`,
       s.nacionalidad,
+      `"${s.paisNacimiento}"`,
+      `"${s.departamento || ''}"`,
       s.tipoVisa,
       `"${s.profesionOficio}"`,
       s.estado,
@@ -393,8 +395,8 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                       <p className="font-medium text-slate-800 line-clamp-1 max-w-[200px]" title={sol.profesionOficio}>
                         {sol.profesionOficio}
                       </p>
-                      <span className="text-[11px] text-slate-400 capitalize">
-                        {sol.nacionalidad}
+                      <span className="text-[11px] text-slate-400">
+                        {sol.nacionalidad}{sol.departamento ? ` • ${sol.departamento}` : ''}
                       </span>
                     </td>
 

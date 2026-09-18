@@ -171,6 +171,7 @@ const SEMILLA_SOLICITUDES: Solicitud[] = [
     telefono: '+502 4190 2811',
     paisNacimiento: 'Guatemala',
     nacionalidad: 'Guatemalteca',
+    departamento: 'Sacatepéquez',
     paisResidencia: 'Guatemala',
     fechaNacimiento: '2001-04-18',
     tipoDocumento: 'dpi',
@@ -271,10 +272,12 @@ class SolicitudStore {
         return (
           nombreCompleto.includes(q) ||
           s.radicado.toLowerCase().includes(q) ||
-          s.email.toLowerCase().includes(q) ||
+          (s.email ? s.email.toLowerCase().includes(q) : false) ||
           s.numeroPasaporte.toLowerCase().includes(q) ||
           s.profesionOficio.toLowerCase().includes(q) ||
-          s.nacionalidad.toLowerCase().includes(q)
+          s.nacionalidad.toLowerCase().includes(q) ||
+          (s.departamento ? s.departamento.toLowerCase().includes(q) : false) ||
+          s.paisNacimiento.toLowerCase().includes(q)
         );
       });
     }

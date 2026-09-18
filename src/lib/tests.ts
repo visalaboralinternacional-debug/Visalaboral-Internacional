@@ -4,7 +4,7 @@
  * validaciones, generación documental, almacenamiento reactivo y caché.
  */
 
-import { ResultadoTest } from '../types';
+import { ResultadoTest, DEPARTAMENTOS_GUATEMALA } from '../types';
 import { generarChecklistPorVisa, calcularProgresoChecklist } from './checklists';
 import { cacheService } from './cache';
 import { authService } from './auth';
@@ -241,6 +241,100 @@ export async function ejecutarSuitePruebas(): Promise<{
     }
 
     solicitudStore.eliminarSolicitud(nuevaConDpi.id);
+  });
+
+  registrar('Store: Radicación con correo electrónico opcional (sin email)', 'Store & Persistencia', () => {
+    const nuevaSinEmail = solicitudStore.crearSolicitud({
+      nombres: 'Postulante Sin Correo',
+      apellidos: 'Rural Test',
+      email: '',
+      telefono: '+502 5555 7777',
+      paisNacimiento: 'Guatemala',
+      nacionalidad: 'Guatemalteca',
+      paisResidencia: 'Guatemala',
+      fechaNacimiento: '1995-08-20',
+      tipoDocumento: 'dpi',
+      numeroPasaporte: '1982 77162 0101',
+      vencimientoPasaporte: '2034-08-20',
+      tipoVisa: 'H-2A',
+      profesionOficio: 'Agricultor Especializado',
+      experienciaAnos: 4,
+      nivelIngles: 'ninguno',
+      nivelEstudio: 'primaria',
+      habilidadesClave: ['Manejo de tractor'],
+      tieneOfertaLaboral: true,
+      visasPreviasEEUU: false,
+      denegacionesPrevias: false,
+      estado: 'pendiente'
+    });
+
+    if (nuevaSinEmail.email !== '') {
+      throw new Error('Fallo: el campo de correo opcional no se guardó correctamente');
+    }
+
+    // Verificar que la búsqueda en store no falle con email vacío
+    const busqueda = solicitudStore.obtenerSolicitudes({
+      busqueda: 'Rural Test',
+      ordenPor: 'fecha',
+      ordenDir: 'desc',
+      pagina: 1,
+      porPagina: 5
+    });
+
+    if (busqueda.items.length === 0) {
+      throw new Error('No se encontró al postulante sin correo en la búsqueda del store');
+    }
+
+    solicitudStore.eliminarSolicitud(nuevaSinEmail.id);
+  });
+
+  registrar('Store: Radicación con Departamento de Guatemala y búsqueda', 'Store & Persistencia', () => {
+    if (DEPARTAMENTOS_GUATEMALA.length !== 22) {
+      throw new Error(`La lista de departamentos debe tener 22 departamentos (tiene ${DEPARTAMENTOS_GUATEMALA.length})`);
+    }
+
+    const nuevaConDepto = solicitudStore.crearSolicitud({
+      nombres: 'Postulante Quetzaltenango',
+      apellidos: 'García',
+      email: 'quetzal@test.com',
+      telefono: '+502 7761 1122',
+      paisNacimiento: 'Guatemala',
+      nacionalidad: 'Guatemalteco/a',
+      departamento: 'Quetzaltenango',
+      paisResidencia: 'Guatemala',
+      fechaNacimiento: '1996-03-10',
+      tipoDocumento: 'dpi',
+      numeroPasaporte: '1892 44321 0901',
+      vencimientoPasaporte: '2033-03-10',
+      tipoVisa: 'H-2A',
+      profesionOficio: 'Agrónomo de Campo',
+      experienciaAnos: 3,
+      nivelIngles: 'basico',
+      nivelEstudio: 'tecnico',
+      habilidadesClave: ['Manejo de hortalizas'],
+      tieneOfertaLaboral: true,
+      visasPreviasEEUU: false,
+      denegacionesPrevias: false,
+      estado: 'pendiente'
+    });
+
+    if (nuevaConDepto.departamento !== 'Quetzaltenango' || nuevaConDepto.paisNacimiento !== 'Guatemala') {
+      throw new Error('El departamento y país de origen no se registraron correctamente');
+    }
+
+    const busquedaPorDepto = solicitudStore.obtenerSolicitudes({
+      busqueda: 'Quetzaltenango',
+      ordenPor: 'fecha',
+      ordenDir: 'desc',
+      pagina: 1,
+      porPagina: 5
+    });
+
+    if (busquedaPorDepto.items.length === 0) {
+      throw new Error('Fallo al buscar por departamento en el almacén');
+    }
+
+    solicitudStore.eliminarSolicitud(nuevaConDepto.id);
   });
 
   registrar('Store: Actualización de estado y recálculo de porcentaje', 'Store & Persistencia', () => {

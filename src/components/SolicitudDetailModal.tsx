@@ -494,8 +494,20 @@ export const SolicitudDetailModal: React.FC<SolicitudDetailModalProps> = ({
                     <p className="font-bold text-slate-900 mt-0.5">{solicitud.nacionalidad} ({solicitud.paisNacimiento})</p>
                   </div>
                   <div>
+                    <span className="text-slate-400 font-medium">Departamento / Ubicación:</span>
+                    <p className="font-bold text-slate-900 mt-0.5">
+                      {solicitud.departamento ? `${solicitud.departamento}, Guatemala` : solicitud.paisResidencia || 'Guatemala'}
+                    </p>
+                  </div>
+                  <div>
                     <span className="text-slate-400 font-medium">Correo Electrónico:</span>
-                    <p className="font-bold text-slate-900 mt-0.5">{solicitud.email}</p>
+                    <p className="font-bold text-slate-900 mt-0.5">
+                      {solicitud.email ? (
+                        solicitud.email
+                      ) : (
+                        <span className="text-slate-400 font-normal italic text-xs">No registrado (opcional)</span>
+                      )}
+                    </p>
                   </div>
                   <div>
                     <span className="text-slate-400 font-medium">Teléfono / WhatsApp:</span>
