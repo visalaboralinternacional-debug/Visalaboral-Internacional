@@ -5,7 +5,7 @@
  */
 
 import React, { useState } from 'react';
-import { Lock, Mail, Key, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
+import { Lock, Mail, Key, ArrowRight, AlertCircle } from 'lucide-react';
 import { authService } from '../lib/auth';
 import { SesionUsuario } from '../types';
 
@@ -14,8 +14,8 @@ interface AdminLoginProps {
 }
 
 export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginExitoso }) => {
-  const [email, setEmail] = useState('visalaboralinternacional@gmail.com');
-  const [password, setPassword] = useState('admin2026*');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [cargando, setCargando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,12 +36,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginExitoso }) => {
     } finally {
       setCargando(false);
     }
-  };
-
-  const aplicarCredencialesDemo = () => {
-    setEmail('visalaboralinternacional@gmail.com');
-    setPassword('admin2026*');
-    setError(null);
   };
 
   return (
@@ -84,6 +78,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginExitoso }) => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="username"
                 className="w-full px-4 py-3 pl-11 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-slate-900 text-sm font-medium outline-none transition-all placeholder:text-slate-400"
                 placeholder="visalaboralinternacional@gmail.com"
               />
@@ -102,6 +97,7 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginExitoso }) => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
                 className="w-full px-4 py-3 pl-11 rounded-xl border border-slate-300 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 text-slate-900 text-sm font-medium outline-none transition-all placeholder:text-slate-400 font-mono"
                 placeholder="••••••••••••"
               />
@@ -125,30 +121,6 @@ export const AdminLogin: React.FC<AdminLoginProps> = ({ onLoginExitoso }) => {
             )}
           </button>
         </form>
-
-        {/* Tarjeta de ayuda rápida para revisores */}
-        <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-          <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-left">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-amber-600" /> Credenciales Oficiales
-              </span>
-              <button
-                type="button"
-                onClick={aplicarCredencialesDemo}
-                className="text-xs text-amber-600 hover:text-amber-700 font-semibold underline cursor-pointer"
-              >
-                Autocompletar
-              </button>
-            </div>
-            <p className="text-xs text-slate-700 font-mono mt-1">
-              Usuario: <span className="font-semibold">visalaboralinternacional@gmail.com</span>
-            </p>
-            <p className="text-xs text-slate-700 font-mono">
-              Clave: <span className="font-semibold">admin2026*</span>
-            </p>
-          </div>
-        </div>
       </div>
     </div>
   );
