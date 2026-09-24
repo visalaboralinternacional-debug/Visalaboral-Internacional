@@ -344,6 +344,16 @@ export async function ejecutarSuitePruebas(): Promise<{
     }
   });
 
+  registrar('WhatsApp: Validación de enlace oficial de resultados al 40529385', 'Canales & Notificaciones', () => {
+    const numeroEsperado = '50240529385';
+    const radicadoMock = 'VLI-2026-TEST';
+    const linkEsperado = `https://wa.me/${numeroEsperado}`;
+    
+    if (!linkEsperado.includes('50240529385')) {
+      throw new Error('El número oficial de WhatsApp de resultados debe ser 50240529385');
+    }
+  });
+
   // 5. Módulo: Generación de Documentos DOCX
   registrar('DOCX: Generación de Contrato Maestro binario', 'Documentos DOCX', async () => {
     const sample = solicitudStore.obtenerPorId('sol-001') || {

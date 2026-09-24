@@ -52,9 +52,28 @@ export const GraciasPage: React.FC<GraciasPageProps> = ({
     }
   };
 
-  const urlWhatsApp = `https://wa.me/?text=${encodeURIComponent(
-    `He radicado mi solicitud de Visa ${solicitud.tipoVisa} en Visatrabajo Internacional con el radicado oficial ${solicitud.radicado}.`
-  )}`;
+  const numeroWhatsAppDestino = '50240529385';
+
+  const mensajeWhatsApp = [
+    `*RESULTADO DE RADICACIÓN - VISATRABAJO INTERNACIONAL*`,
+    ``,
+    `Estimado equipo de Visatrabajo Internacional, he completado mi radicación oficial y envío mis resultados:`,
+    ``,
+    `📌 *Radicado Oficial:* ${solicitud.radicado}`,
+    `👤 *Postulante:* ${solicitud.nombres} ${solicitud.apellidos}`,
+    `🪪 *Documento:* ${solicitud.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte'} ${solicitud.numeroPasaporte}`,
+    `🇬🇹 *Nacionalidad:* ${solicitud.nacionalidad}`,
+    `📍 *Ubicación:* ${solicitud.departamento ? `${solicitud.departamento}, ` : ''}${solicitud.paisNacimiento}`,
+    `💼 *Programa:* Visa ${solicitud.tipoVisa} (${solicitud.profesionOficio})`,
+    `📞 *Teléfono / WhatsApp:* ${solicitud.telefono}`,
+    solicitud.email ? `✉️ *Correo:* ${solicitud.email}` : null,
+    `📊 *Progreso de Expediente:* ${solicitud.porcentajeCompletado}%`,
+    `⚡ *Estado:* ${solicitud.estado.replace('_', ' ').toUpperCase()}`,
+    ``,
+    `Solicito confirmación de recepción de mi radicado y coordinación para los siguientes pasos.`
+  ].filter(Boolean).join('\n');
+
+  const urlWhatsApp = `https://wa.me/${numeroWhatsAppDestino}?text=${encodeURIComponent(mensajeWhatsApp)}`;
 
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 animate-in fade-in zoom-in-95 duration-300">
@@ -167,13 +186,14 @@ export const GraciasPage: React.FC<GraciasPageProps> = ({
           </button>
 
           <a
+            id="btn-whatsapp-resultados"
             href={urlWhatsApp}
             target="_blank"
             rel="noopener noreferrer"
             className="px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all shadow-sm flex items-center gap-2"
           >
             <Share2 className="w-4 h-4" />
-            <span>Compartir por WhatsApp</span>
+            <span>Enviar resultados a WhatsApp (40529385)</span>
           </a>
 
           <button

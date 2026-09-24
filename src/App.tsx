@@ -185,6 +185,15 @@ export default function App() {
                 <Mail className="w-3.5 h-3.5 text-amber-400" />
                 <span className="font-mono text-slate-300">visalaboralinternacional@gmail.com</span>
               </p>
+              <a
+                href="https://wa.me/50240529385"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-slate-400 hover:text-emerald-400 transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5 text-emerald-400" />
+                <span>WhatsApp Oficial: <strong className="text-slate-300 font-mono">+502 40529385</strong></span>
+              </a>
               <p className="flex items-center gap-2">
                 <Shield className="w-3.5 h-3.5 text-emerald-400" />
                 <span>Protocolo de Protección de Datos Personales</span>

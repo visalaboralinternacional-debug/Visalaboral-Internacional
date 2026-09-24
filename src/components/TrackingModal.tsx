@@ -17,7 +17,8 @@ import {
   User, 
   Calendar,
   ChevronRight,
-  ExternalLink
+  ExternalLink,
+  Share2
 } from 'lucide-react';
 import { solicitudStore } from '../lib/store';
 import { Solicitud } from '../types';
@@ -256,6 +257,27 @@ export const TrackingModal: React.FC<TrackingModalProps> = ({
                       <Download className="w-4 h-4 text-slate-400 group-hover:text-amber-600" />
                     </button>
                   </div>
+
+                  {/* Botón directo a WhatsApp 40529385 con resultados */}
+                  <a
+                    href={`https://wa.me/50240529385?text=${encodeURIComponent(
+                      `*RESULTADO DE RASTREO - VISATRABAJO INTERNACIONAL*\n\n` +
+                      `Hola, consulto sobre el estado de mi expediente oficial:\n\n` +
+                      `📌 *Radicado:* ${solicitud.radicado}\n` +
+                      `👤 *Postulante:* ${solicitud.nombres} ${solicitud.apellidos}\n` +
+                      `🪪 *${solicitud.tipoDocumento === 'dpi' ? 'DPI' : 'Pasaporte'}:* ${solicitud.numeroPasaporte}\n` +
+                      `💼 *Programa:* Visa ${solicitud.tipoVisa} (${solicitud.profesionOficio})\n` +
+                      `📊 *Progreso:* ${solicitud.porcentajeCompletado}%\n` +
+                      `⚡ *Estado:* ${solicitud.estado.replace('_', ' ').toUpperCase()}\n\n` +
+                      `Agradezco su atención y asesoría para mi trámite.`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full mt-3 p-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    <span>Enviar resultados a WhatsApp (40529385)</span>
+                  </a>
                 </div>
 
                 {/* Última nota de la bitácora */}
